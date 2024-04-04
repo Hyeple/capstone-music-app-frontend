@@ -1,56 +1,126 @@
-import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { HiOutlineHashtag, HiOutlineHome, HiOutlineMenu, HiOutlinePhotograph, HiOutlineUserGroup } from 'react-icons/hi';
-import { RiCloseLine } from 'react-icons/ri';
+import { motion, useAnimationControls, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import NavigationLink from './NavigationLink';
+import {
+	HeartIcon,
+	HomeIcon,
+	MusicalNoteIcon,
+	Square2StackIcon,
+} from '@heroicons/react/24/outline';
+import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-import { logo } from '../assets';
-
-const links = [
-  { name: '월드 차트', to: '/', icon: HiOutlineHome },
-  { name: '한국 차트', to: '/around-you', icon: HiOutlinePhotograph },
-];
-
-const NavLinks = ({ handleClick }) => (
-  <div className="mt-10">
-    {links.map((item) => (
-      <NavLink
-        key={item.name}
-        to={item.to}
-        className="flex flex-row justify-start items-center my-8 text-sm font-medium text-gray-400 hover:text-cyan-400"
-        onClick={() => handleClick && handleClick()}
-      >
-        <item.icon className="w-6 h-6 mr-2" />
-        {item.name}
-      </NavLink>
-    ))}
-  </div>
-);
-
-const Sidebar = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  return (
-    <>
-      <div className="md:flex hidden flex-col w-[240px] py-10 px-4 bg-[#191624]">
-        <img src={logo} alt="logo" className="w-full h-14 object-contain" />
-        <NavLinks />
-      </div>
-
-      {/* Mobile sidebar */}
-      <div className="absolute md:hidden block top-6 right-3">
-        {!mobileMenuOpen ? (
-          <HiOutlineMenu className="w-6 h-6 mr-2 text-white" onClick={() => setMobileMenuOpen(true)} />
-        ) : (
-          <RiCloseLine className="w-6 h-6 mr-2 text-white" onClick={() => setMobileMenuOpen(false)} />
-        )}
-      </div>
-
-      <div className={`absolute top-0 h-screen w-2/3 bg-gradient-to-tl from-white/10 to-[#483D8B] backdrop-blur-lg z-10 p-6 md:hidden smooth-transition ${mobileMenuOpen ? 'left-0' : '-left-full'}`}>
-        <img src={logo} alt="logo" className="w-full h-14 object-contain" />
-        <NavLinks handleClick={() => setMobileMenuOpen(false)} />
-      </div>
-    </>
-  );
+const containerVariants = {
+	
+	close: {
+		width: '6rem',
+		transition: {
+			type: 'spring',
+			damping: 15,
+			duration: 0.5,
+		},
+	},
+	open: {
+		width: '16rem',
+		transition: {
+			type: 'spring',
+			damping: 15,
+			duration: 0.5,
+		},
+	},
 };
 
-export default Sidebar;
+const svgVariants = {
+	close: {
+		rotate: 360,
+	},
+	open: {
+		rotate: 180,
+	},
+};
+
+const Navigation = () => {
+	const [isOpen, setIsOpen] = useState(false);
+	const [selectedProject, setSelectedProject] = useState<string | null>(null);
+
+	const containerControls = useAnimationControls();
+	const svgControls = useAnimationControls();
+	const favorites = useSelector((state) => state.favorites.favorites);
+
+	useEffect(() => {
+		if (isOpen) {
+			containerControls.start('open');
+			svgControls.start('open');
+		} else {
+			containerControls.start('close');
+			svgControls.start('close');
+		}
+	}, [isOpen]);
+
+	const handleOpenClose = () => {
+		setIsOpen(!isOpen);
+		setSelectedProject(null);
+	};
+
+	return (
+		<>
+			<motion.nav
+				variants={containerVariants}
+				animate={containerControls}
+				initial="close"
+				className="bg-neutral-900 md:flex flex-col z-30 gap-20 p-5 h-full min-h-screen shadow shadow-neutral-600"
+			>
+				<div className="flex flex-row w-full justify-between place-items-center">
+					<div className={isOpen ? "w-10 h-10 bg-gradient-to-br from-gray-500 to-gray-700 rounded-full"  : ' hidden'}/>
+					<button
+						className="p-1 rounded-full flex"
+						onClick={() => handleOpenClose()}
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							strokeWidth={1}
+							stroke="currentColor"
+							className="w-8 h-8 stroke-neutral-200"
+						>
+							<motion.path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								variants={svgVariants}
+								animate={svgControls}
+								d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+								transition={{
+									duration: 0.5,
+									ease: 'easeInOut',
+								}}
+							/>
+						</svg>
+					</button>
+				</div>
+				<div className="flex flex-col gap-5">
+					<NavigationLink name={isOpen ? 'Home' : ''} to="/">
+						<HomeIcon className="stroke-inherit stroke-[0.75] w-8 h-8" />
+					</NavigationLink>
+					<NavigationLink name={isOpen ? 'Practice' : ''} to="/practice">
+						<MusicalNoteIcon className="stroke-inherit stroke-[0.75] w-8 h-8" />
+					</NavigationLink>
+					<NavigationLink name={isOpen ? 'Music Sheet' : ''} to="/musicsheet">
+						<Square2StackIcon className="stroke-inherit stroke-[0.75] w-8 h-8" />
+					</NavigationLink>
+					
+					{favorites.map((song) => (
+        <Link key={song.id} to={`/songs/${song?.key}`} className="favorite-song-link">
+          {song.title}
+        </Link>
+      ))}
+				</div>
+				
+
+
+			</motion.nav>
+		</>
+	);
+};
+
+export default Navigation;

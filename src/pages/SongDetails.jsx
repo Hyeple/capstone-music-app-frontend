@@ -5,6 +5,7 @@ import { DetailsHeader, Error, Loader, RelatedSongs } from '../components';
 
 import { setActiveSong, playPause } from '../redux/features/playerSlice';
 import { useGetSongDetailsQuery, useGetSongRelatedQuery } from '../redux/services/shazamCore';
+import { addFavorite } from '../redux/features/favoriteSlice';
 
 const SongDetails = () => {
   const dispatch = useDispatch();
@@ -29,8 +30,13 @@ const SongDetails = () => {
     dispatch(playPause(true));
   };
 
+  const handleAddToFavorites = () => {
+    dispatch(addFavorite(songData));
+  };
+
   return (
     <div className="flex flex-col">
+      <button onClick={handleAddToFavorites}>Add to Favorites</button>
       <DetailsHeader
         artistId={artistId}
         songData={songData}
