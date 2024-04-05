@@ -110,14 +110,11 @@ const Navigation = () => {
 					</NavigationLink>
 					
 					{favorites.map((song) => (
-        <Link key={song.id} to={`/songs/${song?.key}`} className="favorite-song-link">
-          {song.title}
-        </Link>
-      ))}
+						<Link key={song.id} to={`/songs/${song?.key}`} className="favorite-song-link">
+						{song.title}
+						</Link>
+					))}
 				</div>
-				
-
-
 			</motion.nav>
 		</>
 	);
