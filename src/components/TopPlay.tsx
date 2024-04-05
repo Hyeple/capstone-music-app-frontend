@@ -1,6 +1,6 @@
 /* eslint-disable import/no-unresolved */
 import React, { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper';
@@ -41,13 +41,14 @@ const TopChartCard = ({ song, i, isPlaying, activeSong, handlePauseClick, handle
 );
 
 const TopPlay = () => {
+  const location = useLocation(); // 현재 위치 확인
   const dispatch = useDispatch();
   const { activeSong, isPlaying } = useSelector((state) => state.player);
   const { data } = useGetTopChartsQuery();
   const divRef = useRef(null);
 
   useEffect(() => {
-    divRef.current.scrollIntoView({ behavior: 'smooth' });
+    divRef.current?.scrollIntoView({ behavior: 'smooth' });
   });
 
   const topPlays = data?.slice(0, 5);
@@ -60,6 +61,10 @@ const TopPlay = () => {
     dispatch(setActiveSong({ song, data, i }));
     dispatch(playPause(true));
   };
+
+  if ((location.pathname === '' || location.pathname.startsWith('/search') || location.pathname.startsWith('/songs') || location.pathname.startsWith('/artists')) && window.innerWidth <= 768) {
+    return null; // 조건에 맞으면 렌더링하지 않음
+  }
 
   return (
     <div ref={divRef} className="xl:ml-6 ml-0 xl:mb-0 mb-6 flex-1 xl:max-w-[500px] max-w-full flex flex-col">
@@ -81,34 +86,6 @@ const TopPlay = () => {
             />
           ))}
         </div>
-      </div>
-
-      <div className="w-full flex flex-col mt-8">
-        <div className="flex flex-row justify-between items-center">
-          <h2 className="text-white font-bold text-2xl">World Top Artists</h2>
-        </div>
-
-        <Swiper
-          slidesPerView="auto"
-          spaceBetween={15}
-          freeMode
-          centeredSlides
-          centeredSlidesBounds
-          modules={[FreeMode]}
-          className="mt-4"
-        >
-          {topPlays?.slice(0, 5).map((artist) => (
-            <SwiperSlide
-              key={artist?.key}
-              style={{ width: '25%', height: 'auto' }}
-              className="shadow-lg rounded-full animate-slideright"
-            >
-              <Link to={`/artists/${artist?.artists[0].adamid}`}>
-                <img src={artist?.images?.background} alt="Name" className="rounded-full w-full object-cover" />
-              </Link>
-            </SwiperSlide>
-          ))}
-        </Swiper>
       </div>
     </div>
   );
