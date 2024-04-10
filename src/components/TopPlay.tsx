@@ -62,7 +62,7 @@ const TopPlay = () => {
     dispatch(playPause(true));
   };
 
-  if ((location.pathname === '' || location.pathname.startsWith('/search') || location.pathname.startsWith('/songs') || location.pathname.startsWith('/artists')) && window.innerWidth <= 768) {
+  if ((location.pathname === '' ||  location.pathname.startsWith('/sign-up') ||  location.pathname.startsWith('/sign-in') || location.pathname.startsWith('/search') || location.pathname.startsWith('/songs') || location.pathname.startsWith('/artists'))) {
     return null; // 조건에 맞으면 렌더링하지 않음
   }
 
