@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import React, { useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -23,11 +22,17 @@ const TopChartCard = ({ song, i, isPlaying, activeSong, handlePauseClick, handle
             {song?.title}
           </p>
         </Link>
-        <Link to={`/artists/${song?.artists[0].adamid}`}>
+        {song?.artists && song.artists.length > 0 ? (
+          <Link to={`/artists/${song.artists[0].adamid}`}>
+            <p className="text-base text-gray-300 mt-1">
+              {song?.subtitle}
+            </p>
+          </Link>
+        ) : (
           <p className="text-base text-gray-300 mt-1">
-            {song?.subtitle}
+            No artist available
           </p>
-        </Link>
+        )}
       </div>
     </div>
     <PlayPause
@@ -41,7 +46,7 @@ const TopChartCard = ({ song, i, isPlaying, activeSong, handlePauseClick, handle
 );
 
 const TopPlay = () => {
-  const location = useLocation(); // 현재 위치 확인
+  const location = useLocation();
   const dispatch = useDispatch();
   const { activeSong, isPlaying } = useSelector((state) => state.player);
   const { data } = useGetTopChartsQuery();
@@ -62,8 +67,8 @@ const TopPlay = () => {
     dispatch(playPause(true));
   };
 
-  if ((location.pathname === '' ||  location.pathname.startsWith('/sign-up') ||  location.pathname.startsWith('/sign-in') || location.pathname.startsWith('/search') || location.pathname.startsWith('/songs') || location.pathname.startsWith('/artists'))) {
-    return null; // 조건에 맞으면 렌더링하지 않음
+  if ((location.pathname === '' || location.pathname.startsWith('/search') || location.pathname.startsWith('/songs') || location.pathname.startsWith('/artists')) && window.innerWidth <= 768) {
+    return null; // Do not render under specific conditions
   }
 
   return (
