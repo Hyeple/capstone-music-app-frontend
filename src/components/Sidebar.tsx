@@ -70,8 +70,12 @@ const Navigation = () => {
 				initial="close"
 				className="bg-neutral-900 md:flex flex-col z-30 gap-20 p-5 h-full min-h-screen shadow shadow-neutral-600"
 			>
+				
+
 				<div className="flex flex-row w-full justify-between place-items-center">
-					<div className={isOpen ? "w-10 h-10 bg-gradient-to-br from-gray-500 to-gray-700 rounded-full"  : ' hidden'}/>
+					<Link to="/sign-in">
+						<div className={isOpen ? "w-10 h-10 bg-gradient-to-br from-gray-500 to-gray-700 rounded-full cursor-pointer" : 'hidden'} />
+					</Link>
 					<button
 						className="p-1 rounded-full flex"
 						onClick={() => handleOpenClose()}

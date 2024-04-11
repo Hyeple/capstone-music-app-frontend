@@ -1,7 +1,6 @@
-// MusicPlayer.tsx
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../redux/store'; // 실제 경로에 맞게 조정 필요
+
 import { nextSong, prevSong, playPause } from '../../redux/features/playerSlice';
 import Controls from './Controls';
 import Player from './Player';
@@ -10,7 +9,7 @@ import Track from './Track';
 import VolumeBar from './VolumeBar';
 
 const MusicPlayer = () => {
-  const { activeSong, currentSongs, currentIndex, isActive, isPlaying } = useSelector((state: RootState) => state.player);
+  const { activeSong, currentSongs, currentIndex, isActive, isPlaying } = useSelector((state) => state.player);
   const [duration, setDuration] = useState(0);
   const [seekTime, setSeekTime] = useState(0);
   const [appTime, setAppTime] = useState(0);
@@ -21,28 +20,45 @@ const MusicPlayer = () => {
 
   useEffect(() => {
     if (currentSongs.length) dispatch(playPause(true));
-  }, [currentIndex, dispatch, currentSongs.length]);
+  }, [currentIndex]);
 
   const handlePlayPause = () => {
-    dispatch(playPause(!isPlaying));
+    if (!isActive) return;
+
+    if (isPlaying) {
+      dispatch(playPause(false));
+    } else {
+      dispatch(playPause(true));
+    }
   };
 
   const handleNextSong = () => {
-    const nextIndex = !shuffle ? (currentIndex + 1) % currentSongs.length : Math.floor(Math.random() * currentSongs.length);
-    dispatch(nextSong(nextIndex));
+    dispatch(playPause(false));
+
+    if (!shuffle) {
+      dispatch(nextSong((currentIndex + 1) % currentSongs.length));
+    } else {
+      dispatch(nextSong(Math.floor(Math.random() * currentSongs.length)));
+    }
   };
 
   const handlePrevSong = () => {
-    const prevIndex = currentIndex === 0 ? currentSongs.length - 1 : currentIndex - 1;
-    dispatch(prevSong(prevIndex));
+    if (currentIndex === 0) {
+      dispatch(prevSong(currentSongs.length - 1));
+    } else if (shuffle) {
+      dispatch(prevSong(Math.floor(Math.random() * currentSongs.length)));
+    } else {
+      dispatch(prevSong(currentIndex - 1));
+    }
   };
 
   return (
-    <div className="relative px-8 w-full flex items-center justify-between">
-      <Track isPlaying={isPlaying} activeSong={activeSong} />
+    <div className="relative sm:px-12 px-8 w-full flex items-center justify-between">
+      <Track isPlaying={isPlaying} isActive={isActive} activeSong={activeSong} />
       <div className="flex-1 flex flex-col items-center justify-center">
         <Controls
           isPlaying={isPlaying}
+          isActive={isActive}
           repeat={repeat}
           setRepeat={setRepeat}
           shuffle={shuffle}
@@ -56,7 +72,7 @@ const MusicPlayer = () => {
           value={appTime}
           min="0"
           max={duration}
-          onInput={(e: React.ChangeEvent<HTMLInputElement>) => setSeekTime(Number(e.target.value))}
+          onInput={(event) => setSeekTime(event.target.value)}
           setSeekTime={setSeekTime}
           appTime={appTime}
         />
@@ -68,11 +84,11 @@ const MusicPlayer = () => {
           repeat={repeat}
           currentIndex={currentIndex}
           onEnded={handleNextSong}
-          onTimeUpdate={(e: React.SyntheticEvent<HTMLAudioElement, Event>) => setAppTime(e.currentTarget.currentTime)}
-          onLoadedData={(e: React.SyntheticEvent<HTMLAudioElement, Event>) => setDuration(e.currentTarget.duration)}
+          onTimeUpdate={(event) => setAppTime(event.target.currentTime)}
+          onLoadedData={(event) => setDuration(event.target.duration)}
         />
       </div>
-      <VolumeBar value={volume} min="0" max="1" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setVolume(Number(e.target.value))} />
+      <VolumeBar value={volume} min="0" max="1" onChange={(event) => setVolume(event.target.value)} setVolume={setVolume} />
     </div>
   );
 };
