@@ -22,8 +22,23 @@ const SignupForm = () => {
     },
   })
 
-  function onSubmit(values : z.infer<typeof SignupValidation>){
-    console.log(values)
+  /*
+  const { mutateSync : createUserAccount, isLoading :
+    isCreatingAccount} = useCreateUserAccountMutation();
+*/
+
+  async function onSubmit(values : z.infer<typeof SignupValidation>){
+    /* 
+    const newUser = await createUserAccount(values);
+    
+    if(!newUser){
+      return toast({
+        title : "Sign up failed. Please try again."
+      })
+    }
+
+    const session = awit signInAccount()
+    */
   }
 
   return(
@@ -39,7 +54,7 @@ const SignupForm = () => {
     <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 w-full mt-4">
       <FormField
         control={form.control}
-        name="username"
+        name="name"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Name</FormLabel>
