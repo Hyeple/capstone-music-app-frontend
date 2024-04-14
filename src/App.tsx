@@ -6,13 +6,14 @@ import { ArtistDetails, AroundYou, Search, SongDetails } from './pages';
 import SigninForm from './_auth/forms/SigninForm';
 import AuthLayout from './_auth/AuthLayout';
 import SignupForm from './_auth/forms/SignupForm';
+import UsereditForm from './_auth/forms/UsereditForm';
 
 const App = () => {
   const { activeSong } = useSelector((state) => state.player);
   const location = useLocation();
 
   // Determine if the current route is an authentication route.
-  const isAuthRoute = location.pathname === '/sign-in' || location.pathname === '/sign-up';
+  const isAuthRoute =  location.pathname === '/user-edit' || location.pathname === '/sign-in' || location.pathname === '/sign-up';
 
   return (
     <>
@@ -42,11 +43,12 @@ const App = () => {
 
       {/* Auth routes */}
       {isAuthRoute && (
-        <div className="flex-1 flex flex-col bg-neutral-100">
+        <div className="flex-1 flex flex-col bg-neutral-900">
           <Routes>
             <Route element={<AuthLayout />}>
               <Route path="/sign-in" element={<SigninForm />} />
               <Route path="/sign-up" element={<SignupForm />} />
+              <Route path="/user-edit" element={<UsereditForm />} />
             </Route>
           </Routes>
         </div>
