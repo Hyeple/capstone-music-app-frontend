@@ -44,32 +44,43 @@ const SongDetails = () => {
     dispatch(addFavorite(songData));
   };
 
+  const handleInvisibleClick = () => {
+    console.log('Invisible button clicked');
+  };
+
   return (
     <div className="flex flex-col">
       <div className="flex flex-row items-start">
         <div className="flex-1">
           <DetailsHeader artistId={artistId} songData={songData} />
           <YoutubeVideo videoData={youtubeData} className="w-full h-auto my-4" />
-          <Button onClick={handleAddToFavorites} className="mt-4 self-end">Add to Favorites</Button>
-          <Button className="mt-4 self-end">Make MusicSheet</Button>
-          <Button className="mt-4 self-end">Practice</Button>
+          <div className="flex justify-end space-x-10 mt-4">
+            <Button onClick={handleAddToFavorites} className="self-end">Add to Favorites</Button>
+            <Button className="self-end">Make MusicSheet</Button>
+            <Button className="self-end">Practice</Button>
+            <button onClick={handleInvisibleClick} style={{ opacity: 0, cursor: 'pointer', width: '150px', height: '40px' }}>
+              Invisible
+            </button>
+          </div>
           {lyricData.length > 0 && (
             <div className="mt-4 bg-gray-100 p-4 rounded-md">
               {lyricData.map((line, index) => (
-                <p key={index} className="text-gray-800">{line}</p>
+                <p key={index} className="text-gray-800 mb-2">{line}</p>
               ))}
             </div>
           )}
         </div>
-        <div className="flex-1 mt-10 ml-10">
-          <RelatedSongs
-            data={data}
-            artistId={artistId}
-            isPlaying={isPlaying}
-            activeSong={activeSong}
-            handlePauseClick={handlePauseClick}
-            handlePlayClick={handlePlayClick}
-          />
+        <div className="mt-10">
+          <div className="flex-1 ml-10 mt-10 text-base">
+            <RelatedSongs
+              data={data}
+              artistId={artistId}
+              isPlaying={isPlaying}
+              activeSong={activeSong}
+              handlePauseClick={handlePauseClick}
+              handlePlayClick={handlePlayClick}
+            />
+          </div>
         </div>
       </div>
     </div>
