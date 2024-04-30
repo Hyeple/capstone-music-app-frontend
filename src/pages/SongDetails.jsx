@@ -1,10 +1,10 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { DetailsHeader, Error, Loader, RelatedSongs } from '../components';
+import { DetailsHeader, Error, Loader, RelatedSongs, YoutubeVideo } from '../components'; // YoutubeVideo 컴포넌트 추가
 
 import { setActiveSong, playPause } from '../redux/features/playerSlice';
-import { useGetSongDetailsQuery, useGetSongRelatedQuery } from '../redux/services/shazamCore';
+import { useGetSongDetailsQuery, useGetSongRelatedQuery, useGetYoutubeVideoQuery } from '../redux/services/shazamCore';
 import { addFavorite } from '../redux/features/favoriteSlice';
 
 const SongDetails = () => {
@@ -12,12 +12,14 @@ const SongDetails = () => {
   const { songid, id: artistId } = useParams();
   const { activeSong, isPlaying } = useSelector((state) => state.player);
 
-  const { data, isFetching: isFetchinRelatedSongs, error } = useGetSongRelatedQuery({ songid });
+  const { data, isFetching: isFetchingRelatedSongs, error } = useGetSongRelatedQuery({ songid });
   const { data: songData, isFetching: isFetchingSongDetails } = useGetSongDetailsQuery({ songid });
+  const { data: youtubeData, isFetching: isFetchingYoutubeVideo } = useGetYoutubeVideoQuery({ songid: songData?.key, name: songData?.title });
 
-  if (isFetchingSongDetails && isFetchinRelatedSongs) return <Loader title="Searching song details" />;
+  if (isFetchingSongDetails && isFetchingRelatedSongs && isFetchingYoutubeVideo) return <Loader title="Searching song details and video" />;
 
   console.log(songData);
+  console.log(youtubeData);
 
   if (error) return <Error />;
 
@@ -36,12 +38,9 @@ const SongDetails = () => {
 
   return (
     <div className="flex flex-col">
+      <DetailsHeader artistId={artistId} songData={songData} />
+      <YoutubeVideo videoData={youtubeData} />
       <button onClick={handleAddToFavorites}>Add to Favorites</button>
-      <DetailsHeader
-        artistId={artistId}
-        songData={songData}
-      />
-
       <RelatedSongs
         data={data}
         artistId={artistId}
@@ -50,7 +49,6 @@ const SongDetails = () => {
         handlePauseClick={handlePauseClick}
         handlePlayClick={handlePlayClick}
       />
-
     </div>
   );
 };

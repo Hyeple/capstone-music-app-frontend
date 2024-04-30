@@ -20,20 +20,6 @@ const CountryTracks = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="font-bold text-3xl text-white text-left mt-4"></div>
-
-      <div className="flex flex-wrap justify-center gap-8">
-        {data?.map((song, i) => (
-          <SongCard
-            key={song.id} 
-            song={song}
-            isPlaying={isPlaying}
-            activeSong={activeSong}
-            data={data}
-            i={i}
-          />
-        ))}
-      </div>
     </div>
   );
 };
