@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { DetailsHeader, Error, Loader, RelatedSongs, YoutubeVideo } from '../components';
-
 import { setActiveSong, playPause } from '../redux/features/playerSlice';
-import { useGetSongDetailsQuery, useGetSongRelatedQuery, useGetYoutubeVideoQuery } from '../redux/services/shazamCore';
+import { useGetSongDetailsQuery, useGetSongRelatedQuery, useGetYoutubeVideoQuery, useGetSongDetails2Query } from '../redux/services/shazamCore';
 import { addFavorite } from '../redux/features/favoriteSlice';
 import { Button } from '@/components/ui/button';
 
@@ -16,12 +15,21 @@ const SongDetails = () => {
   const { data, isFetching: isFetchingRelatedSongs, error } = useGetSongRelatedQuery({ songid });
   const { data: songData, isFetching: isFetchingSongDetails } = useGetSongDetailsQuery({ songid });
   const { data: youtubeData, isFetching: isFetchingYoutubeVideo } = useGetYoutubeVideoQuery({ songid: songData?.key, name: songData?.title });
+  const { data: additionalSongData, isFetching: isFetchingAdditionalDetails } = useGetSongDetails2Query({ songid: songData?.trackadamid });
 
-  if (isFetchingSongDetails && isFetchingRelatedSongs && isFetchingYoutubeVideo) return <Loader title="Searching song details and video" />;
+  const [lyricData, setLyricData] = useState([]);
+
+  useEffect(() => {
+    if (additionalSongData && additionalSongData.resources && additionalSongData.resources.lyrics) {
+      const firstLyricKey = Object.keys(additionalSongData.resources.lyrics)[0];
+      const lyrics = additionalSongData.resources.lyrics[firstLyricKey].attributes.text;
+      setLyricData(lyrics);
+    }
+  }, [additionalSongData]);
+
+  if (isFetchingSongDetails && isFetchingRelatedSongs && isFetchingYoutubeVideo && isFetchingAdditionalDetails) return <Loader title="Searching song details and video" />;
 
   if (error) return <Error />;
-
-  console.log(songData);
 
   const handlePauseClick = () => {
     dispatch(playPause(false));
@@ -36,8 +44,6 @@ const SongDetails = () => {
     dispatch(addFavorite(songData));
   };
 
-  const limitedRelatedSongs = data ? data.slice(0, 10) : [];
-
   return (
     <div className="flex flex-col">
       <div className="flex flex-row items-start">
@@ -46,11 +52,18 @@ const SongDetails = () => {
           <YoutubeVideo videoData={youtubeData} className="w-full h-auto my-4" />
           <Button onClick={handleAddToFavorites} className="mt-4 self-end">Add to Favorites</Button>
           <Button className="mt-4 self-end">Make MusicSheet</Button>
-          <Button className="mt-4 self-end">Pratice</Button>
+          <Button className="mt-4 self-end">Practice</Button>
+          {lyricData.length > 0 && (
+            <div className="mt-4 bg-gray-100 p-4 rounded-md">
+              {lyricData.map((line, index) => (
+                <p key={index} className="text-gray-800">{line}</p>
+              ))}
+            </div>
+          )}
         </div>
-        <div className="flex-1 ml-10">
+        <div className="flex-1 mt-10 ml-10">
           <RelatedSongs
-            data={limitedRelatedSongs}
+            data={data}
             artistId={artistId}
             isPlaying={isPlaying}
             activeSong={activeSong}

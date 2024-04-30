@@ -17,6 +17,7 @@ export const shazamCoreApi = createApi({
     getSongsBySearch: builder.query({ query: (searchTerm) => `v1/search/multi?search_type=SONGS_ARTISTS&query=${searchTerm}` }),
     getArtistDetails: builder.query({ query: (artistId) => `v2/artists/details?artist_id=${artistId}` }),
     getSongDetails: builder.query({ query: ({ songid }) => `v1/tracks/details?track_id=${songid}` }),
+    getSongDetails2: builder.query({ query: ({ songid }) => `v2/tracks/details?track_id=${songid}` }),
     getSongRelated: builder.query({ query: ({ songid }) => `v1/tracks/related?track_id=${songid}` }),
     getYoutubeVideo: builder.query({ query: ({ songid, name }) => `v1/tracks/youtube-video?track_id=${songid}&name=${name}` }),
   }),
@@ -29,6 +30,7 @@ export const {
   useGetSongsBySearchQuery,
   useGetArtistDetailsQuery,
   useGetSongDetailsQuery,
+  useGetSongDetails2Query,
   useGetSongRelatedQuery,
   useGetYoutubeVideoQuery,
 } = shazamCoreApi;
