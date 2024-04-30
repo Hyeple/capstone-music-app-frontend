@@ -25,7 +25,7 @@ const CountryTracks = () => {
       <div className="flex flex-wrap justify-center gap-8">
         {data?.map((song, i) => (
           <SongCard
-            key={song.key}
+            key={song.id} 
             song={song}
             isPlaying={isPlaying}
             activeSong={activeSong}
