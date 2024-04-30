@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
@@ -7,6 +7,8 @@ import { playPause, setActiveSong } from '../redux/features/playerSlice';
 
 const SongCard = ({ song, isPlaying, activeSong, data, i }) => {
   const dispatch = useDispatch();
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [initialRotation] = useState(Math.floor(Math.random() * 40 - 20));
 
   const handlePauseClick = () => {
     dispatch(playPause(false));
@@ -17,9 +19,24 @@ const SongCard = ({ song, isPlaying, activeSong, data, i }) => {
     dispatch(playPause(true));
   };
 
+  const cardStyle = {
+    width: '220px',
+    height: '220px',
+    overflow: 'hidden',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+    cursor: 'pointer',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    transform: `rotate(${isSpinning ? 360 : initialRotation}deg)`,
+    justifyContent: 'center',
+    transition: 'transform 1s ease-in-out',
+    backgroundImage: 'linear-gradient(135deg, #333 50%, #000 50%)',
+  };
+
   return (
     <div className="flex flex-col w-[250px] p-4 bg-white/5 bg-opacity-80 backdrop-blur-sm animate-slideup rounded-lg cursor-pointer">
-      <div className="relative w-full h-56 group">
+      <div style={cardStyle} onClick={() => setIsSpinning(!isSpinning)} className="relative rounded-full w-[240px] h-[240px] group">
         <div className={`absolute inset-0 justify-center items-center bg-black bg-opacity-50 group-hover:flex ${activeSong?.title === song.title ? 'flex bg-black bg-opacity-70' : 'hidden'}`}>
           <PlayPause
             isPlaying={isPlaying}
@@ -29,7 +46,7 @@ const SongCard = ({ song, isPlaying, activeSong, data, i }) => {
             handlePlay={handlePlayClick}
           />
         </div>
-        <img alt="song_img" src={song.images?.coverart} className="w-full h-full rounded-lg" />
+        <img alt="song_img" src={song.images?.coverart} className="w-full h-full object-cover rounded-full" /> {/* Adjusted class */}
       </div>
 
       <div className="mt-4 flex flex-col">
