@@ -8,7 +8,7 @@ import { playPause, setActiveSong } from '../redux/features/playerSlice';
 const SongCard = ({ song, isPlaying, activeSong, data, i }) => {
   const dispatch = useDispatch();
   const [isSpinning, setIsSpinning] = useState(false);
-  const [initialRotation] = useState(Math.floor(Math.random() * 40 - 20));
+  const [initialRotation] = useState(0);
 
   const handlePauseClick = () => {
     dispatch(playPause(false));

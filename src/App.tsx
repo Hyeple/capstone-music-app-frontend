@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import { Route, Routes, useLocation } from 'react-router-dom';
 
 import { Searchbar, Sidebar, MusicPlayer, TopPlay } from './components';
-import { ArtistDetails, AroundYou, Search, SongDetails } from './pages';
+import { ArtistDetails, AroundYou, Search, SongDetails, Practice } from './pages';
 import SigninForm from './_auth/forms/SigninForm';
 import AuthLayout from './_auth/AuthLayout';
 import SignupForm from './_auth/forms/SignupForm';
@@ -28,6 +28,7 @@ const App = () => {
                 <Routes>
                   {/* Your non-auth related routes */}
                   <Route path="/" element={<AroundYou />} />
+                  <Route path="/practice" element={<Practice />} />
                   <Route path="/artists/:id" element={<ArtistDetails />} />
                   <Route path="/songs/:songid" element={<SongDetails />} />
                   <Route path="/search/:searchTerm" element={<Search />} />

@@ -139,6 +139,13 @@
   .hide-scrollbar::-webkit-scrollbar {
     display: none; /* WebKit */
   }
+
+  .osmd-cursor {
+    background-color: rgba(255, 0, 21, 0.5); /* Light green background */
+    width: 10px; /* Make the cursor wider */
+    border-radius: 4px; /* Rounded corners for the cursor */
+}
+
   
 
   .common-container {
