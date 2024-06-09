@@ -27,19 +27,26 @@ const SigninForm = () => {
     }
   });
 
-  const handleSignin = async (data) => {
+const handleSignin = async (data) => {
     try {
-      const response = await axios.post('/api/sign-in', data);
-      if (response.status === 200) {
-        toast.success('Logged in successfully!');
-        navigate('/');
-      } else {
-        toast.error('Login failed. Please try again.');
-      }
+        const response = await axios.post('/api/auth/sign-in', data);
+        if (response.status === 200) {
+            // JWT 토큰을 로컬 스토리지에 저장
+            const token = response.data.data.token; // 토큰이 응답 데이터 내에 있는지 확인
+            if (token) {
+                localStorage.setItem('token', token);
+                toast.success('Logged in successfully!');
+                navigate('/');
+            } else {
+                toast.error('No token found in response.');
+            }
+        } else {
+            toast.error('Login failed. Please try again.');
+        }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Login failed. Please try again.');
+        toast.error(error.response?.data?.message || 'Login failed. Please try again.');
     }
-  };
+};
 
   return (
     <Form {...form}>

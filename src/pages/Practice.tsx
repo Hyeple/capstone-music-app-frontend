@@ -55,13 +55,23 @@ const Practice = () => {
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files[0]) {
-      const reader = new FileReader();
-      reader.onload = async (e: ProgressEvent<FileReader>) => {
-        if (e.target?.result) {
-          initSheet(e.target.result as string);
-        }
-      };
-      reader.readAsText(files[0]);
+      const formData = new FormData();
+      formData.append("file", files[0]);
+      formData.append("model", "4stems"); // 예: 모델 선택
+      formData.append('instrumentType', 'guitar');
+      const token = localStorage.getItem("token");
+
+      try {
+        const response = await axios.post('/api/ml/separate', formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "Authorization": `${token}`
+          }
+        });
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 

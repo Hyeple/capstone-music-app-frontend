@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import axios from 'axios';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -11,6 +11,7 @@ import { SignupValidation } from "@/lib/validation";
 import { Input } from '@/components/ui/input';
 
 const SignupForm = () => {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<z.infer<typeof SignupValidation>>({
     resolver: zodResolver(SignupValidation),
@@ -25,10 +26,10 @@ const SignupForm = () => {
   const onSubmit = async (values: z.infer<typeof SignupValidation>) => {
     setIsLoading(true);
     try {
-      const response = await axios.post('/api/sign-up', values);
+      const response = await axios.post('/api/auth/sign-up', values);
       if (response.status === 200) {
         toast.success("Sign up successful! Please log in.");
-        // Optionally, redirect to the login page or somewhere else
+        navigate('/')
       }
     } catch (error) {
       toast.error("Sign up failed. Please try again.");
