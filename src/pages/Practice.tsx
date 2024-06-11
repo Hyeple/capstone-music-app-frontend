@@ -10,6 +10,8 @@ const Practice = () => {
   const [bpm, setBpm] = useState<number>(100);
   const [key, setKey] = useState<string>('0');
   const [fileSelected, setFileSelected] = useState<boolean>(false);
+  const [model, setModel] = useState<string>('4stems');
+  const [instrumentType, setInstrumentType] = useState<string>('guitar');
   const osmdRef = useRef<OpenSheetMusicDisplay | null>(null);
   const audioPlayer = useRef<AudioPlayer | null>(null);
 
@@ -67,14 +69,23 @@ const Practice = () => {
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files[0]) {
-      const reader = new FileReader();
-      reader.onload = async (e: ProgressEvent<FileReader>) => {
-        if (e.target?.result) {
-          initSheet(e.target.result as string);
-          setFileSelected(true);
-        }
-      };
-      reader.readAsText(files[0]);
+      const formData = new FormData();
+      formData.append("file", files[0]);
+      formData.append("model", model);
+      formData.append('instrumentType', instrumentType);
+      const token = localStorage.getItem("token");
+
+      try {
+        const response = await axios.post('/api/ml/separate', formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "Authorization": `${token}`
+          }
+        });
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
@@ -94,15 +105,42 @@ const Practice = () => {
     setKey(newKey);
   };
 
+  const handleChangeModel = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setModel(event.target.value);
+    // Update the instrument type based on the selected model
+    if (event.target.value === '4stems' && instrumentType === 'piano') {
+      setInstrumentType('guitar');
+    }
+  };
+
+  const handleChangeInstrumentType = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setInstrumentType(event.target.value);
+  };
+
   return (
     <div className="bg-gray500 p-4 h-screen flex flex-col items-center justify-center">
       {!fileSelected && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-500 z-10">
           <label className="cursor-pointer flex flex-col items-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             <FaFileUpload className="text-3xl mb-2" />
-            Select Music XML File
+            Select Music File
             <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
           </label>
+          <div className="flex flex-col items-center mt-4">
+            <label className="text-white mb-2">Select Model:</label>
+            <select value={model} onChange={handleChangeModel} className="text-black mb-4">
+              <option value="4stems">4stems</option>
+              <option value="5stems">5stems</option>
+            </select>
+            <label className="text-white mb-2">Select Instrument Type:</label>
+            <select value={instrumentType} onChange={handleChangeInstrumentType} className="text-black">
+              <option value="guitar">Guitar</option>
+              <option value="base">Base</option>
+              <option value="vocal">Vocal</option>
+              <option value="drum">Drum</option>
+              {model === '5stems' && <option value="piano">Piano</option>}
+            </select>
+          </div>
         </div>
       )}
       <div className={`flex justify-around items-center mt-4 ${fileSelected ? 'z-0' : 'hidden'}`}>
