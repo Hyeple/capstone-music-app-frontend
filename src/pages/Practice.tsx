@@ -107,7 +107,6 @@ const Practice = () => {
 
   const handleChangeModel = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setModel(event.target.value);
-    // Update the instrument type based on the selected model
     if (event.target.value === '4stems' && instrumentType === 'piano') {
       setInstrumentType('guitar');
     }
