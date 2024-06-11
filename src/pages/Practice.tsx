@@ -18,7 +18,7 @@ const Practice = () => {
   useEffect(() => {
     const loadScore = async () => {
       const response = await axios.get(
-        'https://raw.githubusercontent.com/Audiveris/audiveris/2d6796cbdcb263dcfde9ffaad9db861f6f37eb9e/test/cases/01-klavier/target.xml'
+        '../../src/assets/init.xml'
       );
       initSheet(response.data);
     };
@@ -50,28 +50,28 @@ const Practice = () => {
         osmdRef.current.cursor.cursorElement.style.borderTop = "195px solid red";
       }
     }
+
+    const scoreSvg = document.getElementById('score')?.getElementsByTagName('svg')[0];
+    if (scoreSvg) {
+      scoreSvg.style.color = 'white';
+      const elementsToChange = scoreSvg.querySelectorAll('*');
+      elementsToChange.forEach(el => {
+        el.setAttribute('fill', 'white');
+        el.setAttribute('stroke', 'white');
+      });
+    }
   };
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files[0]) {
-      const formData = new FormData();
-      formData.append("file", files[0]);
-      formData.append("model", "4stems"); // 예: 모델 선택
-      formData.append('instrumentType', 'guitar');
-      const token = localStorage.getItem("token");
-
-      try {
-        const response = await axios.post('/api/ml/separate', formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            "Authorization": `${token}`
-          }
-        });
-        console.log(response.data);
-      } catch (error) {
-        console.error(error);
-      }
+      const reader = new FileReader();
+      reader.onload = async (e: ProgressEvent<FileReader>) => {
+        if (e.target?.result) {
+          initSheet(e.target.result as string);
+        }
+      };
+      reader.readAsText(files[0]);
     }
   };
 
@@ -92,7 +92,7 @@ const Practice = () => {
   };
 
   return (
-    <div className="bg-white p-4">
+    <div className="bg-gray500 p-4">
       <input type="file" ref={fileInputRef} onChange={handleFileChange} />
       <div className="flex justify-around items-center mt-4">
         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => audioPlayer.current?.play()}>Play</button>
