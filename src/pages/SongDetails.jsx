@@ -20,9 +20,10 @@ const SongDetails = () => {
 
   const [lyricData, setLyricData] = useState([]);
   const [model, setModel] = useState('');
-  const [instrument, setInstrument] = useState('');
+  const [instrumentType, setInstrumentType] = useState('');
   const [instrumentOptions, setInstrumentOptions] = useState([]);
   const [showDropdowns, setShowDropdowns] = useState(false);
+  const [videoId, setVideoId] = useState('');
 
   useEffect(() => {
     if (additionalSongData && additionalSongData.resources && additionalSongData.resources.lyrics) {
@@ -40,7 +41,7 @@ const SongDetails = () => {
     } else {
       setInstrumentOptions([]);
     }
-    setInstrument('');
+    setInstrumentType('');
   }, [model]);
 
   if (isFetchingSongDetails && isFetchingRelatedSongs && isFetchingYoutubeVideo && isFetchingAdditionalDetails) return <Loader title="Searching song details and video" />;
@@ -69,15 +70,18 @@ const SongDetails = () => {
   };
 
   const handleMakeItClick = async () => {
-    console.log(`Model: ${model}, Instrument: ${instrument}`);
+    console.log(`Model: ${model}, Instrument Type: ${instrumentType}, Video ID: ${videoId}`);
+    const token = localStorage.getItem('token');
 
     try {
       const response = await axios.post('/api/임의의_엔드포인트라네요', {
         model,
-        instrument,
+        instrumentType,
+        videoId,
       }, {
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -92,7 +96,7 @@ const SongDetails = () => {
       <div className="flex flex-row items-start">
         <div className="flex-1">
           <DetailsHeader artistId={artistId} songData={songData} />
-          <YoutubeVideo videoData={youtubeData} className="w-full h-auto my-4" />
+          <YoutubeVideo videoData={youtubeData} onVideoIdExtracted={setVideoId} className="w-full h-auto my-4" />
           <div className="flex flex-col items-end space-y-4 mt-4">
             <Button className="self-end bg-gray-800 text-white" onClick={handleShowDropdowns}>Make MusicSheet</Button>
             {showDropdowns && (
@@ -103,7 +107,7 @@ const SongDetails = () => {
                   <option value="5stem">5stem</option>
                 </select>
                 {model && (
-                  <select value={instrument} onChange={(e) => setInstrument(e.target.value)} className="p-2 border rounded w-full bg-gray-500 text-white">
+                  <select value={instrumentType} onChange={(e) => setInstrumentType(e.target.value)} className="p-2 border rounded w-full bg-gray-500 text-white">
                     <option value="">Select Instrument</option>
                     {instrumentOptions.map((option) => (
                       <option key={option} value={option}>
@@ -112,7 +116,7 @@ const SongDetails = () => {
                     ))}
                   </select>
                 )}
-                <Button onClick={handleMakeItClick} disabled={!model || !instrument} className="w-full bg-blue-600 text-white">Make It!</Button>
+                <Button onClick={handleMakeItClick} disabled={!model || !instrumentType} className="w-full bg-blue-600 text-white">Make It!</Button>
               </div>
             )}
           </div>

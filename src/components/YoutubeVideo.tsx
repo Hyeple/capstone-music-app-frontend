@@ -1,12 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
-const YoutubeVideo = ({ videoData }) => {
+const YoutubeVideo = ({ videoData, onVideoIdExtracted }) => {
   if (!videoData || !videoData.actions || !videoData.actions[0].uri) {
     return <div>No video found</div>;
   }
 
   const videoUrl = new URL(videoData.actions[0].uri);
   const videoId = videoUrl.pathname.split('/')[1];
+
+  useEffect(() => {
+    if (videoId) {
+      console.log(videoId);
+      onVideoIdExtracted(videoId);
+    }
+  }, [videoId, onVideoIdExtracted]);
 
   if (!videoId) {
     return <div>Invalid video ID</div>;
