@@ -22,7 +22,7 @@ const Practice = () => {
   useEffect(() => {
     if (!fileSelected) {
       const loadScore = async () => {
-        const response = await axios.get('../../src/assets/init.xml');
+        const response = await axios.get('http://localhost:8080/api/xml');
         initSheet(response.data);
       };
 

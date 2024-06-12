@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import axios from 'axios';
 import { DetailsHeader, Error, Loader, RelatedSongs, YoutubeVideo } from '../components';
 import { setActiveSong, playPause } from '../redux/features/playerSlice';
 import { useGetSongDetailsQuery, useGetSongRelatedQuery, useGetYoutubeVideoQuery, useGetSongDetails2Query } from '../redux/services/shazamCore';
@@ -18,6 +19,10 @@ const SongDetails = () => {
   const { data: additionalSongData, isFetching: isFetchingAdditionalDetails } = useGetSongDetails2Query({ songid: songData?.trackadamid });
 
   const [lyricData, setLyricData] = useState([]);
+  const [model, setModel] = useState('');
+  const [instrument, setInstrument] = useState('');
+  const [instrumentOptions, setInstrumentOptions] = useState([]);
+  const [showDropdowns, setShowDropdowns] = useState(false);
 
   useEffect(() => {
     if (additionalSongData && additionalSongData.resources && additionalSongData.resources.lyrics) {
@@ -26,6 +31,17 @@ const SongDetails = () => {
       setLyricData(lyrics);
     }
   }, [additionalSongData]);
+
+  useEffect(() => {
+    if (model === '4stem') {
+      setInstrumentOptions(['Guitar', 'Vocal', 'Drum', 'Bass']);
+    } else if (model === '5stem') {
+      setInstrumentOptions(['Guitar', 'Vocal', 'Drum', 'Bass', 'Piano']);
+    } else {
+      setInstrumentOptions([]);
+    }
+    setInstrument('');
+  }, [model]);
 
   if (isFetchingSongDetails && isFetchingRelatedSongs && isFetchingYoutubeVideo && isFetchingAdditionalDetails) return <Loader title="Searching song details and video" />;
 
@@ -48,24 +64,62 @@ const SongDetails = () => {
     console.log('Invisible button clicked');
   };
 
+  const handleShowDropdowns = () => {
+    setShowDropdowns(!showDropdowns);
+  };
+
+  const handleMakeItClick = async () => {
+    console.log(`Model: ${model}, Instrument: ${instrument}`);
+
+    try {
+      const response = await axios.post('/api/임의의_엔드포인트라네요', {
+        model,
+        instrument,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log('Server response:', response.data);
+    } catch (error) {
+      console.error('Error sending data to the server:', error);
+    }
+  };
+
   return (
     <div className="flex flex-col">
       <div className="flex flex-row items-start">
         <div className="flex-1">
           <DetailsHeader artistId={artistId} songData={songData} />
           <YoutubeVideo videoData={youtubeData} className="w-full h-auto my-4" />
-          <div className="flex justify-end space-x-10 mt-4">
-            <Button onClick={handleAddToFavorites} className="self-end">Add to Favorites</Button>
-            <Button className="self-end">Make MusicSheet</Button>
-            <Button className="self-end">Practice</Button>
-            <button onClick={handleInvisibleClick} style={{ opacity: 0, cursor: 'pointer', width: '150px', height: '40px' }}>
-              Invisible
-            </button>
+          <div className="flex flex-col items-end space-y-4 mt-4">
+            <Button className="self-end bg-gray-800 text-white" onClick={handleShowDropdowns}>Make MusicSheet</Button>
+            {showDropdowns && (
+              <div className="p-4 border rounded bg-gray-800 text-white space-y-4 w-full">
+                <select value={model} onChange={(e) => setModel(e.target.value)} className="p-2 border rounded w-full bg-gray-500 text-white">
+                  <option value="">Select Model</option>
+                  <option value="4stem">4stem</option>
+                  <option value="5stem">5stem</option>
+                </select>
+                {model && (
+                  <select value={instrument} onChange={(e) => setInstrument(e.target.value)} className="p-2 border rounded w-full bg-gray-500 text-white">
+                    <option value="">Select Instrument</option>
+                    {instrumentOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                )}
+                <Button onClick={handleMakeItClick} disabled={!model || !instrument} className="w-full bg-blue-600 text-white">Make It!</Button>
+              </div>
+            )}
           </div>
           {lyricData.length > 0 && (
-            <div className="mt-4 bg-gray-100 p-4 rounded-md">
+            <div className="mt-4 bg-gray-800 text-white p-4 rounded-md">
               {lyricData.map((line, index) => (
-                <p key={index} className="text-gray-800 mb-2">{line}</p>
+                <p key={index} className="mb-2">{line}</p>
               ))}
             </div>
           )}
