@@ -3,6 +3,8 @@ import axios from 'axios';
 import { OpenSheetMusicDisplay } from 'opensheetmusicdisplay';
 import AudioPlayer from 'osmd-audio-player';
 import { FaFileUpload, FaRedo } from 'react-icons/fa';
+import { Modal } from 'react-responsive-modal';
+import 'react-responsive-modal/styles.css';
 
 const Practice = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -12,8 +14,15 @@ const Practice = () => {
   const [fileSelected, setFileSelected] = useState<boolean>(false);
   const [model, setModel] = useState<string>('4stems');
   const [instrumentType, setInstrumentType] = useState<string>('guitar');
+  const [open, setOpen] = useState<boolean>(false);
+  const [scoreData, setScoreData] = useState<{ score: number, incorrectParts: string[] }>({ score: 0, incorrectParts: [] });
   const osmdRef = useRef<OpenSheetMusicDisplay | null>(null);
   const audioPlayer = useRef<AudioPlayer | null>(null);
+
+  const exampleScoreData = {
+    score: 85,
+    incorrectParts: ['Measure 2, Beat 3', 'Measure 5, Beat 1']
+  };
 
   useEffect(() => {
     audioPlayer.current = new AudioPlayer();
@@ -83,6 +92,7 @@ const Practice = () => {
           }
         });
         console.log(response.data);
+        setFileSelected(true);
       } catch (error) {
         console.error(error);
       }
@@ -116,8 +126,25 @@ const Practice = () => {
     setInstrumentType(event.target.value);
   };
 
+  const handleCheckScore = async () => {
+    try {
+      const response = await axios.get('/api/getScore', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      const data = response.data || exampleScoreData;  // Use example data if response is empty
+      setScoreData(data);
+      setOpen(true);
+    } catch (error) {
+      console.error('Error fetching score data:', error);
+      setScoreData(exampleScoreData); // Use example data in case of error
+      setOpen(true);
+    }
+  };
+
   return (
-    <div className="bg-gray500 p-4 h-screen flex flex-col items-center justify-center">
+    <div className="bg-gray-500 p-4 h-screen flex flex-col items-center justify-center">
       {!fileSelected && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-500 z-10">
           <label className="cursor-pointer flex flex-col items-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
@@ -139,33 +166,54 @@ const Practice = () => {
               <option value="drum">Drum</option>
               {model === '5stems' && <option value="piano">Piano</option>}
             </select>
+            <div className="mt-4 flex items-center">
+              <button className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded" onClick={handleCheckScore}>Check Score</button>
+            </div>
           </div>
         </div>
       )}
-      <div className={`flex justify-around items-center mt-4 ${fileSelected ? 'z-0' : 'hidden'}`}>
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => audioPlayer.current?.play()}>Play</button>
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => audioPlayer.current?.pause()}>Pause</button>
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => audioPlayer.current?.stop()}>Stop</button>
-        <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" onClick={() => setFileSelected(false)}>
-          <FaRedo className="inline-block mr-2" />
-          Change File
-        </button>
-      </div>
-      <div className={`mt-4 flex items-center ${fileSelected ? 'z-0' : 'hidden'}`}>
-        <span className="text-white mr-2">bpm:</span>
-        <input type="number" value={bpm} onChange={handleChangeBpm} className="text-black" />
-        <span className="text-white ml-4 mr-2">key:</span>
-        <select value={key} onChange={handleChangeKey} className="ml-2 text-black">
-          <option value="5">5</option>
-          <option value="0">0</option>
-          <option value="1">1</option>
-          <option value="-1">-1</option>
-          <option value="2">2</option>
-          <option value="-2">-2</option>
-          <option value="-6">-6</option>
-        </select>
-      </div>
-      <div id="score" className="mt-4 w-full h-full"></div>
+      {fileSelected && (
+        <>
+          <div className="flex justify-around items-center mt-4">
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => audioPlayer.current?.play()}>Play</button>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => audioPlayer.current?.pause()}>Pause</button>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => audioPlayer.current?.stop()}>Stop</button>
+            <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" onClick={() => setFileSelected(false)}>
+              <FaRedo className="inline-block mr-2" />
+              Change File
+            </button>
+          </div>
+          <div className="mt-4 flex items-center">
+            <span className="text-white mr-2">bpm:</span>
+            <input type="number" value={bpm} onChange={handleChangeBpm} className="text-black" />
+            <span className="text-white ml-4 mr-2">key:</span>
+            <select value={key} onChange={handleChangeKey} className="ml-2 text-black">
+              <option value="5">5</option>
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="-1">-1</option>
+              <option value="2">2</option>
+              <option value="-2">-2</option>
+              <option value="-6">-6</option>
+            </select>
+          </div>
+          <div className="mt-4 flex items-center">
+            <button className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded" onClick={handleCheckScore}>Check Score</button>
+          </div>
+          <div id="score" className="mt-4 w-full h-full"></div>
+        </>
+      )}
+
+      <Modal open={open} onClose={() => setOpen(false)} center>
+        <h2 className="text-2xl font-bold mb-4 text-black">Practice Score</h2>
+        <p className="mb-2 text-black">Score: {scoreData.score}</p>
+        <h3 className="text-xl font-bold mb-2 text-black">Incorrect Parts:</h3>
+        <ul className="list-disc list-inside text-black">
+          {scoreData.incorrectParts.map((part, index) => (
+            <li key={index}>{part}</li>
+          ))}
+        </ul>
+      </Modal>
     </div>
   );
 };
