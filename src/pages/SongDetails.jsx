@@ -138,11 +138,10 @@ const SongDetails = () => {
 
       console.log('Server response:', response.data);
       const xmlData = response.data.xml;
-      await initSheet(xmlData, osmdRef, setKey, setXmlData, audioPlayer);
       navigate('/practice', { state: { initialXmlData: xmlData } }); // Navigate to practice page with XML data
     } catch (error) {
       console.error('Error sending data to the server:', error);
-      navigate('/practice', { state: { initialXmlData: '' } }); // Navigate to practice page even if there's an error
+      navigate('/practice', { state: { initialXmlData: dummyXml } }); // Navigate to practice page with dummy XML data
     }
   };
 

@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { OpenSheetMusicDisplay } from 'opensheetmusicdisplay';
 import AudioPlayer from 'osmd-audio-player';
 import { FaFileUpload, FaRedo } from 'react-icons/fa';
 import { Modal } from 'react-responsive-modal';
 
-const Practice = ({ initialXmlData = '' }) => {
+const Practice = () => {
+  const location = useLocation();
+  const initialXmlData = location.state?.initialXmlData || '';
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [xmlData, setXmlData] = useState<string>(initialXmlData);
   const [bpm, setBpm] = useState<number>(100);
@@ -23,6 +26,41 @@ const Practice = ({ initialXmlData = '' }) => {
     incorrectParts: ['Measure 2, Beat 3', 'Measure 5, Beat 1']
   };
 
+  const dummyXml = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+    <score-partwise version="3.1">
+      <part-list>
+        <score-part id="P1">
+          <part-name>Music</part-name>
+        </score-part>
+      </part-list>
+      <part id="P1">
+        <measure number="1">
+          <attributes>
+            <divisions>1</divisions>
+            <key>
+              <fifths>0</fifths>
+            </key>
+            <time>
+              <beats>4</beats>
+              <beat-type>4</beat-type>
+            </time>
+            <clef>
+              <sign>G</sign>
+              <line>2</line>
+            </clef>
+          </attributes>
+          <note>
+            <pitch>
+              <step>C</step>
+              <octave>4</octave>
+            </pitch>
+            <duration>4</duration>
+            <type>whole</type>
+          </note>
+        </measure>
+      </part>
+    </score-partwise>`;
+
   useEffect(() => {
     audioPlayer.current = new AudioPlayer();
   }, []);
@@ -30,6 +68,8 @@ const Practice = ({ initialXmlData = '' }) => {
   useEffect(() => {
     if (initialXmlData) {
       initSheet(initialXmlData);
+    } else {
+      initSheet(dummyXml);
     }
   }, [initialXmlData]);
 
