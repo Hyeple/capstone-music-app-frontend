@@ -31,8 +31,14 @@ const Practice = () => {
   useEffect(() => {
     if (!fileSelected) {
       const loadScore = async () => {
-        const response = await axios.get('http://localhost:8080/api/xml');
-        initSheet(response.data);
+        try {
+          const response = await axios.get('http://localhost:8080/api/xml');
+          initSheet(response.data);
+        } catch (error) {
+          const defaultXmlUrl = 'https://raw.githubusercontent.com/Audiveris/audiveris/2d6796cbdcb263dcfde9ffaad9db861f6f37eb9e/test/cases/01-klavier/target.xml';
+          const defaultResponse = await axios.get(defaultXmlUrl);
+          initSheet(defaultResponse.data);
+        }
       };
 
       loadScore();
@@ -133,12 +139,12 @@ const Practice = () => {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
-      const data = response.data || exampleScoreData;  // Use example data if response is empty
+      const data = response.data || exampleScoreData;
       setScoreData(data);
       setOpen(true);
     } catch (error) {
       console.error('Error fetching score data:', error);
-      setScoreData(exampleScoreData); // Use example data in case of error
+      setScoreData(exampleScoreData);
       setOpen(true);
     }
   };
