@@ -216,9 +216,16 @@ const Practice = () => {
     }
   };
 
+  const handleChangeFile = () => {
+    setFileSelected(false);
+    setXmlData('');
+    setModel('4stems');
+    setInstrumentType('guitar');
+  };
+
   return (
     <div className="bg-gray500 p-4 h-screen flex flex-col items-center justify-center">
-      {!fileSelected && !initialXmlData && (
+      {!fileSelected && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-500 z-10">
           <label className="cursor-pointer flex flex-col items-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             <FaFileUpload className="text-3xl mb-2" />
@@ -245,7 +252,7 @@ const Practice = () => {
           </div>
         </div>
       )}
-      {(fileSelected || initialXmlData) && (
+      {fileSelected && (
         <>
           <div className="flex justify-around items-center mt-4">
             <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-5 flex items-center" onClick={() => {
@@ -269,7 +276,7 @@ const Practice = () => {
               <FaStop className="mr-2" />
               Stop
             </button>
-            <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" onClick={() => setFileSelected(false)}>
+            <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" onClick={handleChangeFile}>
               <FaRedo className="mr-2" />
               Change File
             </button>
