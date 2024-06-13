@@ -35,6 +35,9 @@ const SongCard = ({ song, isPlaying, activeSong, data, i }) => {
   };
 
 
+  const defaultArtist = { name: 'Unknown Artist', adamid: 'unknown' };
+  const artist = (song.artists && song.artists[0]) ? song.artists[0] : defaultArtist;
+
   return (
     <div className="flex flex-col w-[250px] p-4 bg-white/5 bg-opacity-80 backdrop-blur-sm animate-slideup rounded-lg cursor-pointer">
       <div style={cardStyle} onClick={() => setIsSpinning(!isSpinning)} className="relative rounded-full w-[240px] h-[240px] group">
@@ -47,7 +50,7 @@ const SongCard = ({ song, isPlaying, activeSong, data, i }) => {
             handlePlay={handlePlayClick}
           />
         </div>
-        <img alt="song_img" src={song.images?.coverart} className="w-full h-full object-cover rounded-full" /> {/* Adjusted class */}
+        <img alt="song_img" src={song.images?.coverart} className="w-full h-full object-cover rounded-full" />
       </div>
 
       <div className="mt-4 flex flex-col">
@@ -57,8 +60,8 @@ const SongCard = ({ song, isPlaying, activeSong, data, i }) => {
           </Link>
         </p>
         <p className="text-sm truncate text-gray-300 mt-1">
-          <Link to={song.artists ? `/artists/${song?.artists[0]?.adamid}` : '/top-artists'}>
-            {song.artists[0].name}
+          <Link to={`/artists/${artist.adamid}`}>
+            {artist.name}
           </Link>
         </p>
       </div>

@@ -1,15 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
+import { OpenSheetMusicDisplay } from 'opensheetmusicdisplay';
+import AudioPlayer from 'osmd-audio-player';
 import { DetailsHeader, Error, Loader, RelatedSongs, YoutubeVideo } from '../components';
 import { setActiveSong, playPause } from '../redux/features/playerSlice';
 import { useGetSongDetailsQuery, useGetSongRelatedQuery, useGetYoutubeVideoQuery, useGetSongDetails2Query } from '../redux/services/shazamCore';
 import { addFavorite } from '../redux/features/favoriteSlice';
 import { Button } from '@/components/ui/button';
+import { initSheet } from './musicUtils';
 
 const SongDetails = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Use useNavigate hook
   const { songid, id: artistId } = useParams();
   const { activeSong, isPlaying } = useSelector((state) => state.player);
 
@@ -24,6 +28,45 @@ const SongDetails = () => {
   const [instrumentOptions, setInstrumentOptions] = useState([]);
   const [showDropdowns, setShowDropdowns] = useState(false);
   const [videoId, setVideoId] = useState('');
+  const [xmlData, setXmlData] = useState('');
+  const [key, setKey] = useState('0');
+  const osmdRef = useRef(null);
+  const audioPlayer = useRef(new AudioPlayer());
+
+  const dummyXml = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+    <score-partwise version="3.1">
+      <part-list>
+        <score-part id="P1">
+          <part-name>Music</part-name>
+        </score-part>
+      </part-list>
+      <part id="P1">
+        <measure number="1">
+          <attributes>
+            <divisions>1</divisions>
+            <key>
+              <fifths>0</fifths>
+            </key>
+            <time>
+              <beats>4</beats>
+              <beat-type>4</beat-type>
+            </time>
+            <clef>
+              <sign>G</sign>
+              <line>2</line>
+            </clef>
+          </attributes>
+          <note>
+            <pitch>
+              <step>C</step>
+              <octave>4</octave>
+            </pitch>
+            <duration>4</duration>
+            <type>whole</type>
+          </note>
+        </measure>
+      </part>
+    </score-partwise>`;
 
   useEffect(() => {
     if (additionalSongData && additionalSongData.resources && additionalSongData.resources.lyrics) {
@@ -43,6 +86,14 @@ const SongDetails = () => {
     }
     setInstrumentType('');
   }, [model]);
+
+  useEffect(() => {
+    const renderDummySheet = async () => {
+      await initSheet(dummyXml, osmdRef, setKey, setXmlData, audioPlayer);
+    };
+
+    renderDummySheet();
+  }, []);
 
   if (isFetchingSongDetails && isFetchingRelatedSongs && isFetchingYoutubeVideo && isFetchingAdditionalDetails) return <Loader title="Searching song details and video" />;
 
@@ -86,8 +137,12 @@ const SongDetails = () => {
       });
 
       console.log('Server response:', response.data);
+      const xmlData = response.data.xml;
+      await initSheet(xmlData, osmdRef, setKey, setXmlData, audioPlayer);
+      navigate('/practice', { state: { initialXmlData: xmlData } }); // Navigate to practice page with XML data
     } catch (error) {
       console.error('Error sending data to the server:', error);
+      navigate('/practice', { state: { initialXmlData: '' } }); // Navigate to practice page even if there's an error
     }
   };
 
@@ -139,6 +194,7 @@ const SongDetails = () => {
           </div>
         </div>
       </div>
+      <div id="score" className="mt-4 w-full h-full" />
     </div>
   );
 };

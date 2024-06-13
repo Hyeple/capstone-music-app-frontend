@@ -6,12 +6,12 @@ import { FaFileUpload, FaRedo } from 'react-icons/fa';
 import { Modal } from 'react-responsive-modal';
 import 'react-responsive-modal/styles.css';
 
-const Practice = () => {
+const Practice = ({ initialXmlData = '' }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [xmlData, setXmlData] = useState<string>('');
+  const [xmlData, setXmlData] = useState<string>(initialXmlData);
   const [bpm, setBpm] = useState<number>(100);
   const [key, setKey] = useState<string>('0');
-  const [fileSelected, setFileSelected] = useState<boolean>(false);
+  const [fileSelected, setFileSelected] = useState<boolean>(!!initialXmlData);
   const [model, setModel] = useState<string>('4stems');
   const [instrumentType, setInstrumentType] = useState<string>('guitar');
   const [open, setOpen] = useState<boolean>(false);
@@ -27,6 +27,12 @@ const Practice = () => {
   useEffect(() => {
     audioPlayer.current = new AudioPlayer();
   }, []);
+
+  useEffect(() => {
+    if (initialXmlData) {
+      initSheet(initialXmlData);
+    }
+  }, [initialXmlData]);
 
   const initSheet = async (xml: string) => {
     console.log("Initializing sheet with XML data:", xml);
@@ -70,8 +76,7 @@ const Practice = () => {
     } catch (error) {
         console.error("Error loading or rendering sheet:", error);
     }
-};
-
+  };
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -153,7 +158,7 @@ const Practice = () => {
 
   return (
     <div className="bg-gray500 p-4 h-screen flex flex-col items-center justify-center">
-      {!fileSelected && (
+      {!fileSelected && !initialXmlData && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-500 z-10">
           <label className="cursor-pointer flex flex-col items-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             <FaFileUpload className="text-3xl mb-2" />
@@ -180,7 +185,7 @@ const Practice = () => {
           </div>
         </div>
       )}
-      {fileSelected && (
+      {(fileSelected || initialXmlData) && (
         <>
           <div className="flex justify-around items-center mt-4">
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => audioPlayer.current?.play()}>Play</button>
