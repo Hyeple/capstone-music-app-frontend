@@ -246,9 +246,6 @@ const Practice = () => {
               <option value="drum">Drum</option>
               {model === '5stems' && <option value="piano">Piano</option>}
             </select>
-            <div className="mt-4 flex items-center">
-              <button className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded" onClick={handleCheckScore}>Check Score</button>
-            </div>
           </div>
         </div>
       )}
