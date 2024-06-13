@@ -20,6 +20,7 @@ const Practice = () => {
   const [scoreData, setScoreData] = useState<{ score: number, incorrectParts: string[] }>({ score: 0, incorrectParts: [] });
   const osmdRef = useRef<OpenSheetMusicDisplay | null>(null);
   const audioPlayer = useRef<AudioPlayer | null>(null);
+  const [initialXmlLoaded, setInitialXmlLoaded] = useState<boolean>(false);
 
   const exampleScoreData = {
     score: 85,
@@ -66,12 +67,27 @@ const Practice = () => {
   }, []);
 
   useEffect(() => {
-    if (initialXmlData) {
-      initSheet(initialXmlData);
+    const loadInitialXml = async () => {
+      try {
+        const response = await fetch('../assets/init.xml');
+        const text = await response.text();
+        await initSheet(text);
+        setInitialXmlLoaded(true);
+      } catch (error) {
+        console.error('Error loading initial XML file:', error);
+      }
+    };
+
+    if (!initialXmlLoaded) {
+      loadInitialXml();
     } else {
-      initSheet(dummyXml);
+      if (initialXmlData) {
+        initSheet(initialXmlData);
+      } else {
+        initSheet(dummyXml);
+      }
     }
-  }, [initialXmlData]);
+  }, [initialXmlLoaded, initialXmlData]);
 
   const initSheet = async (xml: string) => {
     console.log("Initializing sheet with XML data:", xml);
