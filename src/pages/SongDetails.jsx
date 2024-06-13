@@ -138,10 +138,10 @@ const SongDetails = () => {
 
       console.log('Server response:', response.data);
       const xmlData = response.data.xml;
-      navigate('/practice', { state: { initialXmlData: xmlData } }); // Navigate to practice page with XML data
+      navigate('/musicsheet', { state: { initialXmlData: xmlData } }); // Navigate to practice page with XML data
     } catch (error) {
       console.error('Error sending data to the server:', error);
-      navigate('/practice', { state: { initialXmlData: dummyXml } }); // Navigate to practice page with dummy XML data
+      navigate('/musicsheet', { state: { initialXmlData: dummyXml } }); // Navigate to practice page with dummy XML data
     }
   };
 

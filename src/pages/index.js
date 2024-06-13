@@ -3,6 +3,7 @@ import SongDetails from './SongDetails';
 import Search from './Search';
 import AroundYou from './AroundYou';
 import Practice from './Practice';
+import MusicSheet from './MusicSheet';
 
 export {
   Search,
@@ -10,4 +11,5 @@ export {
   SongDetails,
   AroundYou,
   Practice,
+  MusicSheet,
 };
