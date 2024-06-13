@@ -65,6 +65,7 @@ const Practice = () => {
 
   useEffect(() => {
     audioPlayer.current = new AudioPlayer();
+    console.log("AudioPlayer initialized");
   }, []);
 
   useEffect(() => {
@@ -99,38 +100,38 @@ const Practice = () => {
     setXmlData(xml);
 
     if (!osmdRef.current) {
-        console.log("Creating new OpenSheetMusicDisplay instance");
-        osmdRef.current = new OpenSheetMusicDisplay('score', {
-            autoResize: true,
-            backend: 'svg'
-        });
+      console.log("Creating new OpenSheetMusicDisplay instance");
+      osmdRef.current = new OpenSheetMusicDisplay('score', {
+        autoResize: true,
+        backend: 'svg'
+      });
     }
 
     try {
-        await osmdRef.current.load(xml);
-        console.log("Sheet loaded successfully");
-        osmdRef.current.render();
-        console.log("Sheet rendered successfully");
-        audioPlayer.current?.loadScore(osmdRef.current);
+      await osmdRef.current.load(xml);
+      console.log("Sheet loaded successfully");
+      osmdRef.current.render();
+      console.log("Sheet rendered successfully");
+      audioPlayer.current?.loadScore(osmdRef.current);
 
-        if (osmdRef.current.cursor) {
-            osmdRef.current.cursor.show();
-            if (osmdRef.current.cursor.cursorElement) {
-                osmdRef.current.cursor.cursorElement.style.borderTop = "195px solid red";
-            }
+      if (osmdRef.current.cursor) {
+        osmdRef.current.cursor.show();
+        if (osmdRef.current.cursor.cursorElement) {
+          osmdRef.current.cursor.cursorElement.style.borderTop = "195px solid red";
         }
+      }
 
-        const scoreSvg = document.getElementById('score')?.getElementsByTagName('svg')[0];
-        if (scoreSvg) {
-            scoreSvg.style.color = 'white';
-            const elementsToChange = scoreSvg.querySelectorAll('*');
-            elementsToChange.forEach(el => {
-                el.setAttribute('fill', 'white');
-                el.setAttribute('stroke', 'white');
-            });
-        }
+      const scoreSvg = document.getElementById('score')?.getElementsByTagName('svg')[0];
+      if (scoreSvg) {
+        scoreSvg.style.color = 'white';
+        const elementsToChange = scoreSvg.querySelectorAll('*');
+        elementsToChange.forEach(el => {
+          el.setAttribute('fill', 'white');
+          el.setAttribute('stroke', 'white');
+        });
+      }
     } catch (error) {
-        console.error("Error loading or rendering sheet:", error);
+      console.error("Error loading or rendering sheet:", error);
     }
   };
 
@@ -171,7 +172,10 @@ const Practice = () => {
   const handleChangeBpm = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newBpm = parseInt(event.target.value, 10) || 100;
     setBpm(newBpm);
-    audioPlayer.current?.setBpm(newBpm);
+    if (audioPlayer.current) {
+      console.log("Setting BPM in AudioPlayer:", newBpm);
+      audioPlayer.current.setBpm(newBpm);
+    }
   };
 
   const handleChangeKey = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -244,19 +248,28 @@ const Practice = () => {
       {(fileSelected || initialXmlData) && (
         <>
           <div className="flex justify-around items-center mt-4">
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-5 flex items-center" onClick={() => audioPlayer.current?.play()}>
+            <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-5 flex items-center" onClick={() => {
+              console.log("Play button clicked");
+              audioPlayer.current?.play();
+            }}>
               <FaPlay className="mr-2" />
               Play
             </button>
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-5 flex items-center" onClick={() => audioPlayer.current?.pause()}>
+            <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-5 flex items-center" onClick={() => {
+              console.log("Pause button clicked");
+              audioPlayer.current?.pause();
+            }}>
               <FaPause className="mr-2" />
               Pause
             </button>
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-5 flex items-center" onClick={() => audioPlayer.current?.stop()}>
+            <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-5 flex items-center" onClick={() => {
+              console.log("Stop button clicked");
+              audioPlayer.current?.stop();
+            }}>
               <FaStop className="mr-2" />
               Stop
             </button>
-            <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded flex items-center" onClick={() => setFileSelected(false)}>
+            <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" onClick={() => setFileSelected(false)}>
               <FaRedo className="mr-2" />
               Change File
             </button>
@@ -276,7 +289,7 @@ const Practice = () => {
             </select>
           </div>
           <div className="mt-4 flex items-center">
-            <button className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded" onClick={handleCheckScore}>Check Score</button>
+            <button className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded" onClick={handleCheckScore}>Check Score</button>
           </div>
           <div id="score" className="mt-4 w-full h-full"></div>
         </>
