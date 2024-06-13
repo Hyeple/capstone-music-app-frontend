@@ -3,8 +3,9 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { OpenSheetMusicDisplay } from 'opensheetmusicdisplay';
 import AudioPlayer from 'osmd-audio-player';
-import { FaFileUpload, FaRedo } from 'react-icons/fa';
+import { FaFileUpload, FaRedo, FaPlay, FaPause, FaStop } from 'react-icons/fa';
 import { Modal } from 'react-responsive-modal';
+import 'react-responsive-modal/styles.css';
 
 const Practice = () => {
   const location = useLocation();
@@ -243,11 +244,20 @@ const Practice = () => {
       {(fileSelected || initialXmlData) && (
         <>
           <div className="flex justify-around items-center mt-4">
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => audioPlayer.current?.play()}>Play</button>
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => audioPlayer.current?.pause()}>Pause</button>
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => audioPlayer.current?.stop()}>Stop</button>
-            <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" onClick={() => setFileSelected(false)}>
-              <FaRedo className="inline-block mr-2" />
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-5 flex items-center" onClick={() => audioPlayer.current?.play()}>
+              <FaPlay className="mr-2" />
+              Play
+            </button>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-5 flex items-center" onClick={() => audioPlayer.current?.pause()}>
+              <FaPause className="mr-2" />
+              Pause
+            </button>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-5 flex items-center" onClick={() => audioPlayer.current?.stop()}>
+              <FaStop className="mr-2" />
+              Stop
+            </button>
+            <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded flex items-center" onClick={() => setFileSelected(false)}>
+              <FaRedo className="mr-2" />
               Change File
             </button>
           </div>
