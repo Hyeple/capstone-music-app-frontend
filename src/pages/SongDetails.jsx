@@ -106,9 +106,9 @@ const SongDetails = () => {
           )}
         </div>
         <div className="mt-10">
-          <div className="p-4 border rounded bg-gray-800 text-white space-y-4 w-128 ml-5">
-            <h2 className="text-lg font-semibold mb-4">Stem and Instrument Selection</h2>
-            <select value={model} onChange={(e) => setModel(e.target.value)} className="p-2 border rounded w-full bg-gray-500 text-white">
+          <h2 className="font-bold text-3xl ml-4 mb-4">Make MusicSheet</h2>
+          <div className="p-4  rounded bg-gray-800 text-white space-y-4 w-128 ml-5">
+            <select value={model} onChange={(e) => setModel(e.target.value)} className="p-2 mb-4 rounded w-full bg-gray-500 text-white">
               <option value="">Select Model</option>
               <option value="4stem">4stem</option>
               <option value="5stem">5stem</option>
@@ -123,7 +123,9 @@ const SongDetails = () => {
                 ))}
               </select>
             )}
-            <Button onClick={handleMakeItClick} disabled={!model || !instrumentType} className="w-full text-white mt-4">Make MusicSheet</Button>
+            <div className="flex justify-end">
+              <Button onClick={handleMakeItClick} disabled={!model || !instrumentType} className="bg-gray-500 text-white mt-4">Make it!</Button>
+            </div>
           </div>
           <div className="flex-1 ml-5 mt-10 text-base">
             <RelatedSongs
