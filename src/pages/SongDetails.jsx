@@ -97,29 +97,6 @@ const SongDetails = () => {
         <div className="flex-1">
           <DetailsHeader artistId={artistId} songData={songData} />
           <YoutubeVideo videoData={youtubeData} onVideoIdExtracted={setVideoId} className="w-full h-auto my-4" />
-          <div className="flex flex-col items-end space-y-4 mt-4">
-            <Button className="self-end bg-gray-800 text-white" onClick={handleShowDropdowns}>Make MusicSheet</Button>
-            {showDropdowns && (
-              <div className="p-4 border rounded bg-gray-800 text-white space-y-4 w-full">
-                <select value={model} onChange={(e) => setModel(e.target.value)} className="p-2 border rounded w-full bg-gray-500 text-white">
-                  <option value="">Select Model</option>
-                  <option value="4stem">4stem</option>
-                  <option value="5stem">5stem</option>
-                </select>
-                {model && (
-                  <select value={instrumentType} onChange={(e) => setInstrumentType(e.target.value)} className="p-2 border rounded w-full bg-gray-500 text-white">
-                    <option value="">Select Instrument</option>
-                    {instrumentOptions.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                )}
-                <Button onClick={handleMakeItClick} disabled={!model || !instrumentType} className="w-full bg-blue-600 text-white">Make It!</Button>
-              </div>
-            )}
-          </div>
           {lyricData.length > 0 && (
             <div className="mt-4 bg-gray-800 text-white p-4 rounded-md">
               {lyricData.map((line, index) => (
@@ -129,7 +106,26 @@ const SongDetails = () => {
           )}
         </div>
         <div className="mt-10">
-          <div className="flex-1 ml-10 mt-10 text-base">
+          <div className="p-4 border rounded bg-gray-800 text-white space-y-4 w-128 ml-5">
+            <h2 className="text-lg font-semibold mb-4">Stem and Instrument Selection</h2>
+            <select value={model} onChange={(e) => setModel(e.target.value)} className="p-2 border rounded w-full bg-gray-500 text-white">
+              <option value="">Select Model</option>
+              <option value="4stem">4stem</option>
+              <option value="5stem">5stem</option>
+            </select>
+            {model && (
+              <select value={instrumentType} onChange={(e) => setInstrumentType(e.target.value)} className="p-2 border rounded w-full bg-gray-500 text-white">
+                <option value="">Instrument</option>
+                {instrumentOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            )}
+            <Button onClick={handleMakeItClick} disabled={!model || !instrumentType} className="w-full text-white mt-4">Make MusicSheet</Button>
+          </div>
+          <div className="flex-1 ml-5 mt-10 text-base">
             <RelatedSongs
               data={data}
               artistId={artistId}
