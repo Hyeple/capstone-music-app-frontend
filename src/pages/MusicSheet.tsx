@@ -253,10 +253,6 @@ const MusicSheet = () => {
               <FaStop className="mr-2" />
               Stop
             </button>
-            <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" onClick={handleChangeFile}>
-              <FaRedo className="mr-2" />
-              Change File
-            </button>
           </div>
           <div className="mt-4 flex items-center">
             <span className="text-white mr-2">bpm:</span>
