@@ -153,7 +153,7 @@ const SongDetails = () => {
           <DetailsHeader artistId={artistId} songData={songData} />
           <YoutubeVideo videoData={youtubeData} onVideoIdExtracted={setVideoId} className="w-full h-auto my-4" />
           {lyricData.length > 0 && (
-            <div className="mt-4 bg-gray-800 text-white p-4 rounded-md">
+            <div className="mt-4 text-white p-4 rounded-md">
               {lyricData.map((line, index) => (
                 <p key={index} className="mb-2">{line}</p>
               ))}
@@ -162,7 +162,7 @@ const SongDetails = () => {
         </div>
         <div className="mt-10">
           <h2 className="font-bold text-3xl ml-4 mb-4">Make MusicSheet</h2>
-          <div className="p-4  rounded bg-gray-800 text-white space-y-4 w-128 ml-5">
+          <div className="p-4  rounded text-white space-y-4 w-128 ml-5">
             <select value={model} onChange={(e) => setModel(e.target.value)} className="p-2 mb-4 rounded w-full bg-gray-500 text-white">
               <option value="">Select Model</option>
               <option value="4stem">4stem</option>
