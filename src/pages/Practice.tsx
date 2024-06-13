@@ -249,36 +249,38 @@ const Practice = () => {
           </div>
         </div>
       )}
+
       {fileSelected && (
         <>
-          <div className="flex justify-around items-center mt-4">
-            <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-5 flex items-center" onClick={() => {
-              console.log("Play button clicked");
-              audioPlayer.current?.play();
-            }}>
-              <FaPlay className="mr-2" />
-              Play
-            </button>
-            <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-5 flex items-center" onClick={() => {
-              console.log("Pause button clicked");
-              audioPlayer.current?.pause();
-            }}>
-              <FaPause className="mr-2" />
-              Pause
-            </button>
-            <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-5 flex items-center" onClick={() => {
-              console.log("Stop button clicked");
-              audioPlayer.current?.stop();
-            }}>
-              <FaStop className="mr-2" />
-              Stop
-            </button>
-            <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" onClick={handleChangeFile}>
-              <FaRedo className="mr-2" />
-              Change File
-            </button>
-          </div>
+              <div className="flex justify-around items-center mt-4">
+        <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-5 flex items-center" onClick={() => {
+          console.log("Play button clicked");
+          audioPlayer.current?.play();
+        }}>
+          <FaPlay className="mr-2" />
+          Play
+        </button>
+        <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-5 flex items-center" onClick={() => {
+          console.log("Pause button clicked");
+          audioPlayer.current?.pause();
+        }}>
+          <FaPause className="mr-2" />
+          Pause
+        </button>
+        <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-5 flex items-center" onClick={() => {
+          console.log("Stop button clicked");
+          audioPlayer.current?.stop();
+        }}>
+          <FaStop className="mr-2" />
+          Stop
+        </button>
+        <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center" onClick={handleChangeFile}>
+          <FaRedo className="mr-2" />
+          Change File
+        </button>
+      </div>
           <div className="mt-4 flex items-center">
+            
             <span className="text-white mr-2">bpm:</span>
             <input type="number" value={bpm} onChange={handleChangeBpm} className="text-black" />
             <span className="text-white ml-4 mr-2">key:</span>

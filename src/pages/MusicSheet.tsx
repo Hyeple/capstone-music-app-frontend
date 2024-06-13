@@ -71,8 +71,13 @@ const MusicSheet = () => {
   useEffect(() => {
     const loadInitialXml = async () => {
       try {
-        const response = await fetch('../assets/init.xml');
-        const text = await response.text();
+        const token = localStorage.getItem("token");
+        const response = await axios.get('/api/ml/get_xml', {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+        const text = response.data;
         await initSheet(text);
         setInitialXmlLoaded(true);
       } catch (error) {
