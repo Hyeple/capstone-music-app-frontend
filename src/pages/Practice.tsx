@@ -5,7 +5,6 @@ import { OpenSheetMusicDisplay } from 'opensheetmusicdisplay';
 import AudioPlayer from 'osmd-audio-player';
 import { FaFileUpload, FaRedo } from 'react-icons/fa';
 import { Modal } from 'react-responsive-modal';
-import 'react-responsive-modal/styles.css';
 
 const Practice = () => {
   const location = useLocation();
