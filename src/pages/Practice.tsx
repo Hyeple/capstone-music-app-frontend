@@ -152,7 +152,7 @@ const Practice = () => {
   };
 
   return (
-    <div className="bg-gray-500 p-4 h-screen flex flex-col items-center justify-center">
+    <div className="bg-gray500 p-4 h-screen flex flex-col items-center justify-center">
       {!fileSelected && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-500 z-10">
           <label className="cursor-pointer flex flex-col items-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
@@ -196,13 +196,13 @@ const Practice = () => {
             <input type="number" value={bpm} onChange={handleChangeBpm} className="text-black" />
             <span className="text-white ml-4 mr-2">key:</span>
             <select value={key} onChange={handleChangeKey} className="ml-2 text-black">
-              <option value="5">5</option>
+              <option value="-3">-3</option>
+              <option value="-2">-2</option>
+              <option value="-1">-1</option>
               <option value="0">0</option>
               <option value="1">1</option>
-              <option value="-1">-1</option>
               <option value="2">2</option>
-              <option value="-2">-2</option>
-              <option value="-6">-6</option>
+              <option value="3">3</option>
             </select>
           </div>
           <div className="mt-4 flex items-center">
