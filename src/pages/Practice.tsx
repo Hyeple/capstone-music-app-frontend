@@ -226,8 +226,8 @@ const Practice = () => {
   return (
     <div className="bg-gray500 p-4 h-screen flex flex-col items-center justify-center">
       {!fileSelected && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-500 z-10">
-          <label className="cursor-pointer flex flex-col items-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+          <label className="cursor-pointer flex flex-col items-center bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
             <FaFileUpload className="text-3xl mb-2" />
             Select Music File
             <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
