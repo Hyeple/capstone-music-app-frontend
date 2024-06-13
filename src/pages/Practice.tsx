@@ -28,24 +28,8 @@ const Practice = () => {
     audioPlayer.current = new AudioPlayer();
   }, []);
 
-  useEffect(() => {
-    if (!fileSelected) {
-      const loadScore = async () => {
-        try {
-          const response = await axios.get('http://localhost:8080/api/xml');
-          initSheet(response.data);
-        } catch (error) {
-          const defaultXmlUrl = 'https://raw.githubusercontent.com/Audiveris/audiveris/2d6796cbdcb263dcfde9ffaad9db861f6f37eb9e/test/cases/01-klavier/target.xml';
-          const defaultResponse = await axios.get(defaultXmlUrl);
-          initSheet(defaultResponse.data);
-        }
-      };
-
-      loadScore();
-    }
-  }, [fileSelected]);
-
   const initSheet = async (xml: string) => {
+    console.log("Initializing sheet with XML data:", xml);
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xml, 'text/xml');
     const keyFifths = xmlDoc.getElementsByTagName('fifths')[0]?.textContent || '0';
@@ -53,33 +37,41 @@ const Practice = () => {
     setXmlData(xml);
 
     if (!osmdRef.current) {
-      osmdRef.current = new OpenSheetMusicDisplay('score', {
-        autoResize: true,
-        backend: 'svg'
-      });
+        console.log("Creating new OpenSheetMusicDisplay instance");
+        osmdRef.current = new OpenSheetMusicDisplay('score', {
+            autoResize: true,
+            backend: 'svg'
+        });
     }
 
-    await osmdRef.current.load(xml);
-    osmdRef.current.render();
-    audioPlayer.current?.loadScore(osmdRef.current);
+    try {
+        await osmdRef.current.load(xml);
+        console.log("Sheet loaded successfully");
+        osmdRef.current.render();
+        console.log("Sheet rendered successfully");
+        audioPlayer.current?.loadScore(osmdRef.current);
 
-    if (osmdRef.current.cursor) {
-      osmdRef.current.cursor.show();
-      if (osmdRef.current.cursor.cursorElement) {
-        osmdRef.current.cursor.cursorElement.style.borderTop = "195px solid red";
-      }
-    }
+        if (osmdRef.current.cursor) {
+            osmdRef.current.cursor.show();
+            if (osmdRef.current.cursor.cursorElement) {
+                osmdRef.current.cursor.cursorElement.style.borderTop = "195px solid red";
+            }
+        }
 
-    const scoreSvg = document.getElementById('score')?.getElementsByTagName('svg')[0];
-    if (scoreSvg) {
-      scoreSvg.style.color = 'white';
-      const elementsToChange = scoreSvg.querySelectorAll('*');
-      elementsToChange.forEach(el => {
-        el.setAttribute('fill', 'white');
-        el.setAttribute('stroke', 'white');
-      });
+        const scoreSvg = document.getElementById('score')?.getElementsByTagName('svg')[0];
+        if (scoreSvg) {
+            scoreSvg.style.color = 'white';
+            const elementsToChange = scoreSvg.querySelectorAll('*');
+            elementsToChange.forEach(el => {
+                el.setAttribute('fill', 'white');
+                el.setAttribute('stroke', 'white');
+            });
+        }
+    } catch (error) {
+        console.error("Error loading or rendering sheet:", error);
     }
-  };
+};
+
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -94,13 +86,23 @@ const Practice = () => {
         const response = await axios.post('/api/ml/separate', formData, {
           headers: {
             "Content-Type": "multipart/form-data",
-            "Authorization": `${token}`
+            "Authorization": `Bearer ${token}`
           }
         });
         console.log(response.data);
         setFileSelected(true);
+
+        // 파일 업로드 후 XML 데이터를 가져오는 요청
+        const xmlResponse = await axios.get('/api/ml/get_xml', {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+        console.log("XML response received:", xmlResponse.data);
+        await initSheet(xmlResponse.data);
+
       } catch (error) {
-        console.error(error);
+        console.error("Error uploading file or fetching XML data:", error);
       }
     }
   };
