@@ -74,7 +74,7 @@ const SongDetails = () => {
     const token = localStorage.getItem('token');
 
     try {
-      const response = await axios.post('/api/임의의_엔드포인트라네요', {
+      const response = await axios.post('/api/sheet/generate', {
         model,
         instrumentType,
         videoId,
