@@ -83,17 +83,13 @@ const MusicSheet = () => {
 
       const scoreSvg = document.getElementById('score')?.getElementsByTagName('svg')[0];
       if (scoreSvg) {
-        const setColor = () => {
-          const elementsToChange = scoreSvg.querySelectorAll('*');
-          elementsToChange.forEach(el => {
-            el.setAttribute('fill', 'white');
-            el.setAttribute('stroke', 'white');
-          });
-        };
-        setColor();
-
-        const observer = new MutationObserver(setColor);
-        observer.observe(scoreSvg, { attributes: true, childList: true, subtree: true });
+        scoreSvg.style.backgroundColor = 'white';
+        scoreSvg.style.color = 'black';
+        const elementsToChange = scoreSvg.querySelectorAll('*');
+        elementsToChange.forEach(el => {
+          el.setAttribute('fill', 'black');
+          el.setAttribute('stroke', 'black');
+        });
       }
 
       // Fix for play buttons disappearing
@@ -143,7 +139,7 @@ const MusicSheet = () => {
   };
 
   return (
-    <div className="bg-gray500 p-4 h-screen flex flex-col items-center justify-center">
+    <div className="p-4 h-screen flex flex-col items-center justify-center">
       <div id="buttons-container" className="flex justify-around items-center mt-4">
         <Button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-5 flex items-center" onClick={() => {
           console.log("Play button clicked");
